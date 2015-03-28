@@ -67,27 +67,28 @@ func Diff(start, end time.Time, options *DiffOptions) (string, error) {
 
 	// Stringify
 
-	// Has a higher place value been shown? Then ignore zeroes
-	hasHigherPlace := false
-	if showLeading || numYears != 0 || alwaysShowYear {
+	// Has a higher place value been shown? Then ignore zeroes (we set this to
+	// showLeading because they act in the same manner)
+	hasHigherPlace := showLeading
+	if hasHigherPlace || numYears != 0 || alwaysShowYear {
 		stringifyTimeUnit(&dateBuffer, numYears, "year", false)
 		if numYears != 0 {
 			hasHigherPlace = true
 		}
 	}
-	if showLeading || hasHigherPlace || numMonths != 0 || alwaysShowMonth {
+	if hasHigherPlace || numMonths != 0 || alwaysShowMonth {
 		stringifyTimeUnit(&dateBuffer, int(numMonths), "month", false)
 		if numMonths != 0 {
 			hasHigherPlace = true
 		}
 	}
-	if showLeading || hasHigherPlace || numDays != 0 || alwaysShowDay {
+	if hasHigherPlace || numDays != 0 || alwaysShowDay {
 		stringifyTimeUnit(&dateBuffer, numDays, "day", false)
 		if numDays != 0 {
 			hasHigherPlace = true
 		}
 	}
-	if showLeading || hasHigherPlace || numHours != 0 || alwaysShowHour {
+	if hasHigherPlace || numHours != 0 || alwaysShowHour {
 		stringifyTimeUnit(&dateBuffer, numHours, "hour", false)
 	}
 	stringifyTimeUnit(&dateBuffer, numMinutes, "minute", true)
