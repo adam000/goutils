@@ -27,22 +27,6 @@ func Diff(start, end time.Time, options *DiffOptions) (string, error) {
 	alwaysShowDay := options.alwaysShowDay
 	alwaysShowHour := options.alwaysShowHour
 
-	// TODO make this a function because leap years
-	numDaysInMonth := map[time.Month]int{
-		time.January:   31,
-		time.February:  28,
-		time.March:     31,
-		time.April:     30,
-		time.May:       31,
-		time.June:      30,
-		time.July:      31,
-		time.August:    31,
-		time.September: 30,
-		time.October:   31,
-		time.November:  30,
-		time.December:  31,
-	}
-
 	if start.After(end) {
 		return "", errors.New("start must be before end")
 	}
@@ -67,14 +51,13 @@ func Diff(start, end time.Time, options *DiffOptions) (string, error) {
 
 	if numDays < 0 {
 		numMonths--
-		priorMonth := numMonths
+		priorMonth := end.Month() - 1
 		priorYear := end.Year()
 		if priorMonth <= 0 {
 			priorMonth += 12
 			priorYear--
 		}
-		// TODO add in priorYear when this becomes a function instead of a map
-		numDays += numDaysInMonth[priorMonth]
+		numDays += numDaysInMonth(priorMonth, priorYear)
 	}
 
 	if numMonths < 0 {
@@ -110,6 +93,27 @@ func Diff(start, end time.Time, options *DiffOptions) (string, error) {
 	stringifyTimeUnit(&dateBuffer, numMinutes, "minute", true)
 
 	return dateBuffer.String(), nil
+}
+
+func numDaysInMonth(month time.Month, year int) int {
+	if month == time.February && year%4 == 0 {
+		return 29
+	}
+
+	return map[time.Month]int{
+		time.January:   31,
+		time.February:  28,
+		time.March:     31,
+		time.April:     30,
+		time.May:       31,
+		time.June:      30,
+		time.July:      31,
+		time.August:    31,
+		time.September: 30,
+		time.October:   31,
+		time.November:  30,
+		time.December:  31,
+	}[month]
 }
 
 func stringifyTimeUnit(dateBuffer *bytes.Buffer, count int, name string, isLast bool) {
