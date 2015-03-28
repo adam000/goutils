@@ -1,0 +1,37 @@
+package date
+
+import (
+	"testing"
+	"time"
+)
+
+func TestDiff(t *testing.T) {
+	location, _ := time.LoadLocation("America/Los_Angeles")
+
+	tests := []struct {
+		start   time.Time
+		end     time.Time
+		output  string
+		options *DiffOptions
+	}{
+		// alwaysShowYear
+		{
+			time.Date(2014, time.January, 1, 12, 0, 0, 0, location),
+			time.Date(2014, time.January, 1, 13, 0, 0, 0, location),
+			"0 years, 1 hour, 0 minutes",
+			&DiffOptions{
+				alwaysShowYear: true,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		result, err := Diff(test.start, test.end, test.options)
+		if err != nil {
+			t.Errorf("Unexpected error '%s'", err.Error())
+		}
+		if result != test.output {
+			t.Errorf("Expected '%s', got '%s'", test.output, result)
+		}
+	}
+}
