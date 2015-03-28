@@ -8,11 +8,11 @@ import (
 )
 
 type DiffOptions struct {
-	showLeading     bool
-	alwaysShowYear  bool
-	alwaysShowMonth bool
-	alwaysShowDay   bool
-	alwaysShowHour  bool
+	ShowLeading     bool
+	AlwaysShowYear  bool
+	AlwaysShowMonth bool
+	AlwaysShowDay   bool
+	AlwaysShowHour  bool
 }
 
 func Diff(start, end time.Time, options *DiffOptions) (string, error) {
@@ -21,11 +21,11 @@ func Diff(start, end time.Time, options *DiffOptions) (string, error) {
 	if options == nil {
 		options = &DiffOptions{}
 	}
-	showLeading := options.showLeading
-	alwaysShowYear := options.alwaysShowYear
-	alwaysShowMonth := options.alwaysShowMonth
-	alwaysShowDay := options.alwaysShowDay
-	alwaysShowHour := options.alwaysShowHour
+	showLeading := options.ShowLeading
+	alwaysShowYear := options.AlwaysShowYear
+	alwaysShowMonth := options.AlwaysShowMonth
+	alwaysShowDay := options.AlwaysShowDay
+	alwaysShowHour := options.AlwaysShowHour
 
 	if start.After(end) {
 		return "", errors.New("start must be before end")

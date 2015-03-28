@@ -20,7 +20,7 @@ func TestDiff(t *testing.T) {
 			time.Date(2014, time.January, 1, 13, 0, 0, 0, location),
 			"0 years, 1 hour, 0 minutes",
 			&DiffOptions{
-				alwaysShowYear: true,
+				AlwaysShowYear: true,
 			},
 		},
 		// Leap day check - not a leap year
