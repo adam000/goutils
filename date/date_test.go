@@ -18,7 +18,7 @@ func TestDiff(t *testing.T) {
 		{
 			time.Date(2014, time.January, 1, 12, 0, 0, 0, location),
 			time.Date(2014, time.January, 1, 13, 0, 0, 0, location),
-			"0 years, 1 hour, 0 minutes",
+			"0 years, 1 hour, and 0 minutes",
 			&DiffOptions{
 				AlwaysShowYear: true,
 			},
@@ -27,14 +27,14 @@ func TestDiff(t *testing.T) {
 		{
 			time.Date(2015, time.February, 26, 0, 0, 0, 0, location),
 			time.Date(2015, time.March, 3, 0, 0, 0, 0, location),
-			"5 days, 0 hours, 0 minutes",
+			"5 days, 0 hours, and 0 minutes",
 			nil,
 		},
 		// Leap day check - a leap year
 		{
 			time.Date(2016, time.February, 26, 0, 0, 0, 0, location),
 			time.Date(2016, time.March, 3, 0, 0, 0, 0, location),
-			"6 days, 0 hours, 0 minutes",
+			"6 days, 0 hours, and 0 minutes",
 			nil,
 		},
 	}

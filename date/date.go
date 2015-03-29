@@ -118,6 +118,9 @@ func numDaysInMonth(month time.Month, year int) int {
 }
 
 func stringifyTimeUnit(dateBuffer *bytes.Buffer, count int, name string, isLast bool) {
+	if isLast {
+		dateBuffer.WriteString("and ")
+	}
 	dateBuffer.WriteString(strconv.Itoa(count))
 	dateBuffer.WriteString(" ")
 	dateBuffer.WriteString(name)
