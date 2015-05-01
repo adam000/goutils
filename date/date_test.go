@@ -5,21 +5,21 @@ import (
 	"time"
 )
 
-func TestDiff(t *testing.T) {
+func TestGetDiffString(t *testing.T) {
 	location, _ := time.LoadLocation("America/Los_Angeles")
 
 	tests := []struct {
 		start   time.Time
 		end     time.Time
 		output  string
-		options *DiffOptions
+		options *DiffDisplayOptions
 	}{
 		// alwaysShowYear
 		{
 			time.Date(2014, time.January, 1, 12, 0, 0, 0, location),
 			time.Date(2014, time.January, 1, 13, 0, 0, 0, location),
 			"0 years, 1 hour, and 0 minutes",
-			&DiffOptions{
+			&DiffDisplayOptions{
 				AlwaysShowYear: true,
 			},
 		},
@@ -40,7 +40,8 @@ func TestDiff(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result, err := Diff(test.start, test.end, test.options)
+		// TODO unit test GetDiff and Diff.Display() instead
+		result, err := GetDiffString(test.start, test.end, test.options)
 		if err != nil {
 			t.Errorf("Unexpected error '%s'", err.Error())
 		}

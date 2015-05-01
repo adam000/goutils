@@ -7,91 +7,127 @@ import (
 	"time"
 )
 
-type DiffOptions struct {
+type TimeUnit int
+
+const (
+	Minute TimeUnit = iota
+	Hour
+	Day
+	Month
+	Year
+)
+
+type DiffDisplayOptions struct {
 	ShowLeading     bool
 	AlwaysShowYear  bool
 	AlwaysShowMonth bool
 	AlwaysShowDay   bool
 	AlwaysShowHour  bool
+	Granularity     TimeUnit
 }
 
-func Diff(start, end time.Time, options *DiffOptions) (string, error) {
-	var dateBuffer bytes.Buffer
+type Diff struct {
+	Years, Months, Days, Hours, Minutes int
+}
 
-	if options == nil {
-		options = &DiffOptions{}
+func GetDiffString(start, end time.Time, options *DiffDisplayOptions) (string, error) {
+	diff, err := GetDiff(start, end)
+	if err != nil {
+		return "", err
 	}
-	showLeading := options.ShowLeading
-	alwaysShowYear := options.AlwaysShowYear
-	alwaysShowMonth := options.AlwaysShowMonth
-	alwaysShowDay := options.AlwaysShowDay
-	alwaysShowHour := options.AlwaysShowHour
 
+	str, err := diff.Display(options)
+	return str, err
+}
+
+func GetDiff(start, end time.Time) (d Diff, err error) {
 	if start.After(end) {
-		return "", errors.New("start must be before end")
+		return Diff{}, errors.New("start must be before end")
 	}
 
 	// Calculate the diff
-	numYears := end.Year() - start.Year()
-	numMonths := end.Month() - start.Month()
-	numDays := end.Day() - start.Day()
-	numHours := end.Hour() - start.Hour()
-	numMinutes := end.Minute() - start.Minute()
+	d.Years = end.Year() - start.Year()
+	d.Months = int(end.Month() - start.Month())
+	d.Days = end.Day() - start.Day()
+	d.Hours = end.Hour() - start.Hour()
+	d.Minutes = end.Minute() - start.Minute()
 
 	// Correct for negative values
-	if numMinutes < 0 {
-		numHours--
-		numMinutes += 60
+	if d.Minutes < 0 {
+		d.Hours--
+		d.Minutes += 60
 	}
 
-	if numHours < 0 {
-		numDays--
-		numHours += 24
+	if d.Hours < 0 {
+		d.Days--
+		d.Hours += 24
 	}
 
-	if numDays < 0 {
-		numMonths--
+	if d.Days < 0 {
+		d.Months--
 		priorMonth := end.Month() - 1
 		priorYear := end.Year()
 		if priorMonth <= 0 {
 			priorMonth += 12
 			priorYear--
 		}
-		numDays += numDaysInMonth(priorMonth, priorYear)
+		d.Days += numDaysInMonth(priorMonth, priorYear)
 	}
 
-	if numMonths < 0 {
-		numYears--
-		numMonths += 12
+	if d.Months < 0 {
+		d.Years--
+		d.Months += 12
 	}
 
-	// Stringify
+	return
+}
+
+func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
+	var dateBuffer bytes.Buffer
+
+	if options == nil {
+		options = &DiffDisplayOptions{}
+	}
+	showLeading := options.ShowLeading
+	alwaysShowYear := options.AlwaysShowYear
+	alwaysShowMonth := options.AlwaysShowMonth
+	alwaysShowDay := options.AlwaysShowDay
+	alwaysShowHour := options.AlwaysShowHour
+	granularity := options.Granularity
 
 	// Has a higher place value been shown? Then ignore zeroes (we set this to
 	// showLeading because they act in the same manner)
 	hasHigherPlace := showLeading
-	if hasHigherPlace || numYears != 0 || alwaysShowYear {
-		stringifyTimeUnit(&dateBuffer, numYears, "year", false)
-		if numYears != 0 {
+	if hasHigherPlace || d.Years != 0 || alwaysShowYear {
+		stringifyTimeUnit(&dateBuffer, d.Years, "year", false)
+		if d.Years != 0 {
 			hasHigherPlace = true
 		}
 	}
-	if hasHigherPlace || numMonths != 0 || alwaysShowMonth {
-		stringifyTimeUnit(&dateBuffer, int(numMonths), "month", false)
-		if numMonths != 0 {
-			hasHigherPlace = true
+	if granularity <= Month {
+		if hasHigherPlace || d.Months != 0 || alwaysShowMonth {
+			stringifyTimeUnit(&dateBuffer, int(d.Months), "month", granularity == Month)
+			if d.Months != 0 {
+				hasHigherPlace = true
+			}
 		}
 	}
-	if hasHigherPlace || numDays != 0 || alwaysShowDay {
-		stringifyTimeUnit(&dateBuffer, numDays, "day", false)
-		if numDays != 0 {
-			hasHigherPlace = true
+	if granularity <= Day {
+		if hasHigherPlace || d.Days != 0 || alwaysShowDay {
+			stringifyTimeUnit(&dateBuffer, d.Days, "day", granularity == Day)
+			if d.Days != 0 {
+				hasHigherPlace = true
+			}
 		}
 	}
-	if hasHigherPlace || numHours != 0 || alwaysShowHour {
-		stringifyTimeUnit(&dateBuffer, numHours, "hour", false)
+	if granularity <= Hour {
+		if hasHigherPlace || d.Hours != 0 || alwaysShowHour {
+			stringifyTimeUnit(&dateBuffer, d.Hours, "hour", granularity == Hour)
+		}
 	}
-	stringifyTimeUnit(&dateBuffer, numMinutes, "minute", true)
+	if granularity <= Minute {
+		stringifyTimeUnit(&dateBuffer, d.Minutes, "minute", granularity == Minute)
+	}
 
 	return dateBuffer.String(), nil
 }
