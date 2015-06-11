@@ -82,6 +82,25 @@ func GetDiff(start, end time.Time) (d Diff, err error) {
 	return
 }
 
+func NumDaysDiff(start, end time.Time) (numDays int, err error) {
+	if start.After(end) {
+		return 0, errors.New("start must be before end")
+	}
+
+	year := start.Year()
+
+	numDays -= start.YearDay()
+
+	for year < end.Year() {
+		numDays += numDaysInYear(year)
+		year++
+	}
+
+	numDays += end.YearDay() + 1
+
+	return
+}
+
 func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	var dateBuffer bytes.Buffer
 
@@ -132,25 +151,30 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	return dateBuffer.String(), nil
 }
 
+func numDaysInYear(year int) int {
+	if year%4 == 0 {
+		return 366
+	} else {
+		return 365
+	}
+}
+
 func numDaysInMonth(month time.Month, year int) int {
 	if month == time.February && year%4 == 0 {
 		return 29
 	}
 
-	return map[time.Month]int{
-		time.January:   31,
-		time.February:  28,
-		time.March:     31,
-		time.April:     30,
-		time.May:       31,
-		time.June:      30,
-		time.July:      31,
-		time.August:    31,
-		time.September: 30,
-		time.October:   31,
-		time.November:  30,
-		time.December:  31,
-	}[month]
+	switch month {
+	case time.February:
+		return 28
+	case time.January, time.March, time.May, time.July, time.August, time.October, time.December:
+		return 31
+	case time.April, time.June, time.September, time.November:
+		return 30
+	}
+
+	// Can't reach this...
+	return 0
 }
 
 func stringifyTimeUnit(dateBuffer *bytes.Buffer, count int, name string, isLast bool) {
