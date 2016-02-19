@@ -18,7 +18,7 @@ func (p Page) getJSFiles() []string {
 	return p.javascript
 }
 
-func (p Page) addJSFile(file ...string) {
+func (p Page) addJSFiles(file ...string) {
 	p.javascript = append(p.javascript, file...)
 }
 
@@ -26,6 +26,6 @@ func (p Page) getCSSFiles() []string {
 	return p.stylesheets
 }
 
-func (p Page) addCSSFile(file ...string) {
+func (p Page) addCSSFiles(file ...string) {
 	p.stylesheets = append(p.stylesheets, file...)
 }
