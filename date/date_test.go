@@ -86,6 +86,15 @@ func TestDiffDisplay(t *testing.T) {
 			},
 			"2 months, 10 days, and 12 hours",
 		},
+		// 2 places
+		{
+			Diff{
+				Hours:   12,
+				Minutes: 12,
+			},
+			&DiffDisplayOptions{},
+			"12 hours and 12 minutes",
+		},
 		// 1 place
 		{
 			Diff{

@@ -117,15 +117,16 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	// Has a higher place value been shown? Then ignore zeroes (we set this to
 	// showLeading because they act in the same manner)
 	hasHigherPlace := showLeading
+	numPlaces := d.getNumPlaces()
 	if hasHigherPlace || d.Years != 0 || alwaysShowYear {
-		options.stringifyTimeUnit(d.Years, "year", hasHigherPlace, false)
+		options.stringifyTimeUnit(d.Years, "year", hasHigherPlace, false, numPlaces == 2)
 		if d.Years != 0 {
 			hasHigherPlace = true
 		}
 	}
 	if granularity <= Month {
 		if hasHigherPlace || d.Months != 0 || alwaysShowMonth {
-			options.stringifyTimeUnit(d.Months, "month", hasHigherPlace, granularity == Month)
+			options.stringifyTimeUnit(d.Months, "month", hasHigherPlace, granularity == Month, numPlaces == 2)
 			if d.Months != 0 {
 				hasHigherPlace = true
 			}
@@ -133,7 +134,7 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	}
 	if granularity <= Day {
 		if hasHigherPlace || d.Days != 0 || alwaysShowDay {
-			options.stringifyTimeUnit(d.Days, "day", hasHigherPlace, granularity == Day)
+			options.stringifyTimeUnit(d.Days, "day", hasHigherPlace, granularity == Day, numPlaces == 2)
 			if d.Days != 0 {
 				hasHigherPlace = true
 			}
@@ -141,14 +142,14 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	}
 	if granularity <= Hour {
 		if hasHigherPlace || d.Hours != 0 || alwaysShowHour {
-			options.stringifyTimeUnit(d.Hours, "hour", hasHigherPlace, granularity == Hour)
+			options.stringifyTimeUnit(d.Hours, "hour", hasHigherPlace, granularity == Hour, numPlaces == 2)
 			if d.Hours != 0 {
 				hasHigherPlace = true
 			}
 		}
 	}
 	if granularity <= Minute {
-		options.stringifyTimeUnit(d.Minutes, "minute", hasHigherPlace, granularity == Minute)
+		options.stringifyTimeUnit(d.Minutes, "minute", hasHigherPlace, granularity == Minute, numPlaces == 2)
 	}
 
 	return options.stringBuffer.String(), nil
@@ -159,6 +160,9 @@ func (d Diff) getNumPlaces() (numPlaces int) {
 		numPlaces++
 	}
 	if d.Months != 0 {
+		numPlaces++
+	}
+	if d.Days != 0 {
 		numPlaces++
 	}
 	if d.Hours != 0 {
@@ -196,8 +200,12 @@ func numDaysInMonth(month time.Month, year int) int {
 	return 0
 }
 
-func (d *DiffDisplayOptions) stringifyTimeUnit(count int, name string, hasHigherPlace, isLast bool) {
+func (d *DiffDisplayOptions) stringifyTimeUnit(count int, name string, hasHigherPlace, isLast, hideComma bool) {
 	if isLast && hasHigherPlace {
+		if hideComma {
+			d.stringBuffer.WriteString(" ")
+		}
+
 		d.stringBuffer.WriteString("and ")
 	}
 	d.stringBuffer.WriteString(strconv.Itoa(count))
@@ -206,7 +214,7 @@ func (d *DiffDisplayOptions) stringifyTimeUnit(count int, name string, hasHigher
 	if count != 1 {
 		d.stringBuffer.WriteString("s")
 	}
-	if !isLast {
+	if !isLast && !hideComma {
 		d.stringBuffer.WriteString(", ")
 	}
 }
