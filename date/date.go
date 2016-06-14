@@ -24,6 +24,8 @@ type DiffDisplayOptions struct {
 	AlwaysShowDay   bool
 	AlwaysShowHour  bool
 	Granularity     TimeUnit
+	// The string buffer used when building the string to display
+	stringBuffer bytes.Buffer
 }
 
 type Diff struct {
@@ -102,8 +104,6 @@ func NumDaysDiff(start, end time.Time) (numDays int, err error) {
 }
 
 func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
-	var dateBuffer bytes.Buffer
-
 	if options == nil {
 		options = &DiffDisplayOptions{}
 	}
@@ -118,14 +118,14 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	// showLeading because they act in the same manner)
 	hasHigherPlace := showLeading
 	if hasHigherPlace || d.Years != 0 || alwaysShowYear {
-		stringifyTimeUnit(&dateBuffer, d.Years, "year", false)
+		options.stringifyTimeUnit(d.Years, "year", hasHigherPlace, false)
 		if d.Years != 0 {
 			hasHigherPlace = true
 		}
 	}
 	if granularity <= Month {
 		if hasHigherPlace || d.Months != 0 || alwaysShowMonth {
-			stringifyTimeUnit(&dateBuffer, int(d.Months), "month", granularity == Month)
+			options.stringifyTimeUnit(d.Months, "month", hasHigherPlace, granularity == Month)
 			if d.Months != 0 {
 				hasHigherPlace = true
 			}
@@ -133,7 +133,7 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	}
 	if granularity <= Day {
 		if hasHigherPlace || d.Days != 0 || alwaysShowDay {
-			stringifyTimeUnit(&dateBuffer, d.Days, "day", granularity == Day)
+			options.stringifyTimeUnit(d.Days, "day", hasHigherPlace, granularity == Day)
 			if d.Days != 0 {
 				hasHigherPlace = true
 			}
@@ -141,14 +141,33 @@ func (d Diff) Display(options *DiffDisplayOptions) (string, error) {
 	}
 	if granularity <= Hour {
 		if hasHigherPlace || d.Hours != 0 || alwaysShowHour {
-			stringifyTimeUnit(&dateBuffer, d.Hours, "hour", granularity == Hour)
+			options.stringifyTimeUnit(d.Hours, "hour", hasHigherPlace, granularity == Hour)
+			if d.Hours != 0 {
+				hasHigherPlace = true
+			}
 		}
 	}
 	if granularity <= Minute {
-		stringifyTimeUnit(&dateBuffer, d.Minutes, "minute", granularity == Minute)
+		options.stringifyTimeUnit(d.Minutes, "minute", hasHigherPlace, granularity == Minute)
 	}
 
-	return dateBuffer.String(), nil
+	return options.stringBuffer.String(), nil
+}
+
+func (d Diff) getNumPlaces() (numPlaces int) {
+	if d.Years != 0 {
+		numPlaces++
+	}
+	if d.Months != 0 {
+		numPlaces++
+	}
+	if d.Hours != 0 {
+		numPlaces++
+	}
+	if d.Minutes != 0 {
+		numPlaces++
+	}
+	return
 }
 
 func numDaysInYear(year int) int {
@@ -177,17 +196,17 @@ func numDaysInMonth(month time.Month, year int) int {
 	return 0
 }
 
-func stringifyTimeUnit(dateBuffer *bytes.Buffer, count int, name string, isLast bool) {
-	if isLast {
-		dateBuffer.WriteString("and ")
+func (d *DiffDisplayOptions) stringifyTimeUnit(count int, name string, hasHigherPlace, isLast bool) {
+	if isLast && hasHigherPlace {
+		d.stringBuffer.WriteString("and ")
 	}
-	dateBuffer.WriteString(strconv.Itoa(count))
-	dateBuffer.WriteString(" ")
-	dateBuffer.WriteString(name)
+	d.stringBuffer.WriteString(strconv.Itoa(count))
+	d.stringBuffer.WriteString(" ")
+	d.stringBuffer.WriteString(name)
 	if count != 1 {
-		dateBuffer.WriteString("s")
+		d.stringBuffer.WriteString("s")
 	}
 	if !isLast {
-		dateBuffer.WriteString(", ")
+		d.stringBuffer.WriteString(", ")
 	}
 }

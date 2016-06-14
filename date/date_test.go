@@ -86,7 +86,14 @@ func TestDiffDisplay(t *testing.T) {
 			},
 			"2 months, 10 days, and 12 hours",
 		},
-		// TODO add test cases for when it displays 2 numbers or 1
+		// 1 place
+		{
+			Diff{
+				Minutes: 12,
+			},
+			&DiffDisplayOptions{},
+			"12 minutes",
+		},
 	}
 
 	for _, test := range tests {
