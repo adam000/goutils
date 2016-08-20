@@ -1,31 +1,44 @@
 package page
 
 type Page struct {
-	title       string
-	javascript  []string
-	stylesheets []string
+	Title       string
+	Javascript  []string
+	Stylesheets []string
+	Vars        map[string]interface{}
 }
 
-func (p Page) getTitle() string {
-	return p.title
+func NewPage() Page {
+	ret := Page{
+		Vars: make(map[string]interface{}),
+	}
+
+	return ret
 }
 
-func (p Page) setTitle(title string) {
-	p.title = title
+func (p Page) GetTitle() string {
+	return p.Title
 }
 
-func (p Page) getJSFiles() []string {
-	return p.javascript
+func (p Page) SetTitle(title string) {
+	p.Title = title
 }
 
-func (p Page) addJSFiles(file ...string) {
-	p.javascript = append(p.javascript, file...)
+func (p Page) GetJSFiles() []string {
+	return p.Javascript
 }
 
-func (p Page) getCSSFiles() []string {
-	return p.stylesheets
+func (p *Page) AddJSFiles(file ...string) {
+	p.Javascript = append(p.Javascript, file...)
 }
 
-func (p Page) addCSSFiles(file ...string) {
-	p.stylesheets = append(p.stylesheets, file...)
+func (p Page) GetCSSFiles() []string {
+	return p.Stylesheets
+}
+
+func (p *Page) AddCSSFiles(file ...string) {
+	p.Stylesheets = append(p.Stylesheets, file...)
+}
+
+func (p Page) AddVar(name string, variable interface{}) {
+	p.Vars[name] = variable
 }
