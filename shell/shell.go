@@ -1,13 +1,11 @@
-// +build !windows
 package shell
 
 import (
+	"math/rand"
 	"os"
 	"os/exec"
-	"strings"
+	"time"
 )
-
-var tmpDir = ""
 
 // Run is a no muss, no fuss way to run a command in a shell.
 func Run(command ...string) (string, error) {
@@ -17,34 +15,47 @@ func Run(command ...string) (string, error) {
 	return string(output), err
 }
 
-// TempDir makes and returns a temporary directory. Any provided arguments will
-// be evaluated as successive directories within that temporary directory.
-// Unix-only.
-func TempDir(subdir ...string) (string, error) {
-	if tmpDir == "" {
-		// Try to mktmp the base directory
-		dirPrefix := "temp"
-		if len(subdir) > 0 {
-			dirPrefix = subdir[0]
-		}
+// TempDir gets the system temporary directory and makes a random directory
+// underneath that for this probram to use. It may be the developer's
+// responsibility to clean up this directory before the application closes.
+// Consider using cleanup.Defer() in this repository.
+func TempDir() (string, error) {
+	length := 8
+	base := os.TempDir()
+	var dirName string
 
-		dir, err := Run("mktemp", "-d", "-t", dirPrefix)
-		if err != nil {
-			return "", err
+	for {
+		dirName = RandLowerChars(length)
+		if !FileExists(base + dirName) {
+			break
 		}
-		tmpDir = strings.Trim(dir, "\n\t ")
 	}
 
-	// No subdirectory
-	if len(subdir) < 2 {
-		return tmpDir, nil
-	}
-
-	// Make the directories underneath the base directory
-	fullPath := tmpDir + strings.Join(subdir[1:], "/")
-	if err := os.MkdirAll(fullPath, os.ModeDir); err != nil {
+	if err := os.MkdirAll(base+dirName, os.ModeDir|os.ModePerm); err != nil {
 		return "", err
 	}
 
-	return fullPath, nil
+	return base + dirName, nil
+}
+
+func FileExists(path string) bool {
+	_, err := os.Lstat(path)
+	return !os.IsNotExist(err)
+}
+
+// TODO move this elsewhere
+const lowerChars = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func RandLowerChars(length int) string {
+	subdir := make([]byte, length)
+
+	for i := 0; i < length; i++ {
+		subdir[i] = lowerChars[rand.Intn(len(lowerChars))]
+	}
+
+	return string(subdir)
 }
