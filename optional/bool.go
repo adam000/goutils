@@ -12,6 +12,14 @@ func NewBool(value bool) Bool {
 	}
 }
 
+// EmptyBool returns a new Bool that does not have a value set.
+func EmptyBool() Bool {
+	return Bool{
+		false,
+		false,
+	}
+}
+
 func (b Bool) IsSet() bool {
 	return b.isSet
 }
