@@ -10,6 +10,7 @@ func TestGetContext(t *testing.T) {
 	//   * name (varchar(20))
 	//   * quantity (int)
 	// Both rows must be in the primary key.
+	// Travis CI will have this set up already, see .travis.yml in the root.
 	context, err := GetContext("test", "test", "", "golang_test")
 	if err != nil {
 		t.Fatalf("Unexpected error establishing context: %s", err)

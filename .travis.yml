@@ -2,3 +2,7 @@ language: go
 go:
   - 1.7.x
   - master
+services:
+  - mysql
+before_install:
+  - mysql -u root -e "CREATE DATABASE golang_test; CREATE USER 'test'@'localhost' IDENTIFIED BY 'test'; GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost'; USE golang_test; CREATE TABLE context_test (name VARCHAR(20), quantity int, CONSTRAINT PRIMARY KEY (name, quantity));"
