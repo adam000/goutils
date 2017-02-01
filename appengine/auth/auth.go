@@ -9,11 +9,9 @@ import (
 
 func IsLoggedIn(r *http.Request) bool {
 	c := appengine.NewContext(r)
-	u := user.Current(c)
-	return u != nil
+	return user.Current(c) != nil
 }
 
 func IsAdminLoggedIn(r *http.Request) bool {
-	c := appengine.NewContext(r)
-	return user.IsAdmin(c)
+	return user.IsAdmin(appengine.NewContext(r))
 }
