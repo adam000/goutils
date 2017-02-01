@@ -3,6 +3,7 @@ package page
 var config = struct {
 	defaultStylesheets []string
 	defaultJavascript  []string
+	siteTitle          string
 }{}
 
 func SetDefaultStylesheets(stylesheets []string) {
@@ -19,4 +20,8 @@ func SetDefaultJavascript(javascript []string) {
 
 func GetDefaultJavascript() []string {
 	return config.defaultJavascript
+}
+
+func SetSiteTitle(title string) {
+	config.siteTitle = title
 }

@@ -5,11 +5,17 @@ type Page struct {
 	Javascript  []string
 	Stylesheets []string
 	Vars        map[string]interface{}
+	SiteTitle   string
 }
 
 func NewPage() Page {
+	siteTitle := config.siteTitle
+	if config.siteTitle == "" {
+		siteTitle = "adam zero dot net"
+	}
 	ret := Page{
-		Vars: make(map[string]interface{}),
+		SiteTitle: siteTitle,
+		Vars:      make(map[string]interface{}),
 	}
 
 	return ret
