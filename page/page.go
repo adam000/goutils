@@ -1,10 +1,7 @@
 package page
 
-import "google.golang.org/appengine/user"
-
 type Page struct {
 	Title       string
-	User        *user.User
 	Javascript  []string
 	Stylesheets []string
 	Vars        map[string]interface{}
@@ -30,10 +27,6 @@ func (p *Page) GetTitle() string {
 
 func (p *Page) SetTitle(title string) {
 	p.Title = title
-}
-
-func (p *Page) SetUser(user *user.User) {
-	p.User = user
 }
 
 func (p *Page) GetJSFiles() []string {
