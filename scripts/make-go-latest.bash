@@ -2,7 +2,7 @@
 
 set +e
 
-VERSION="release-branch.go1.8"
+VERSION="release-branch.go1.9"
 
 export CGO_ENABLED=0
 
