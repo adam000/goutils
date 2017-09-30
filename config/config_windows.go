@@ -1,6 +1,5 @@
 // +build windows
 
-// Package config wraps xdgdir.Config to allow for OS-independent configuration.
 package config
 
 import (
@@ -10,9 +9,9 @@ import (
 )
 
 func Open(filename string) (*os.File, error) {
-	dir := os.Getenv("USERPROFILE")
+	dir := os.Getenv("LOCALAPPDATA")
 	if dir == "" {
-		return nil, fmt.Errorf("Could not find %%USERPROFILE%% envar")
+		return nil, fmt.Errorf("Could not find %%LOCALAPPDATA%% envar")
 	}
 
 	f, err := os.Open(filepath.Join(dir, filename))
