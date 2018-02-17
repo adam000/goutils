@@ -12,7 +12,7 @@ func (d *Deferrer) Cleanup() {
 		d.funcs[i]()
 	}
 
-	d.funcs = []func(){}
+	d.funcs = nil
 }
 
 // Defer adds a function to the Deferrer's stack.
@@ -22,7 +22,5 @@ func (d *Deferrer) Defer(f func()) {
 
 // New creates a new Deferrer for defering actions on *your* timetable.
 func New() Deferrer {
-	return Deferrer{
-		funcs: make([]func(), 0),
-	}
+	return Deferrer{}
 }
