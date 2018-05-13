@@ -45,7 +45,7 @@ func TestGetDiff(t *testing.T) {
 			t.Errorf("Unexpected error '%s'", err.Error())
 		}
 		if result != test.output {
-			t.Errorf("Expected '%s', got '%s'", test.output, result)
+			t.Errorf("Expected '%v', got '%v'", test.output, result)
 		}
 	}
 }
