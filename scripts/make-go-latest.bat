@@ -1,6 +1,6 @@
 ::@echo off
 
-SET VERSION=release-branch.go1.9
+SET VERSION=release-branch.go1.14
 
 SET ROOT=%USERPROFILE%\go
 mkdir %ROOT%
