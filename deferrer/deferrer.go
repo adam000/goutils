@@ -1,5 +1,7 @@
 package deferrer
 
+import "log"
+
 // Deferrer allows for collecting many defer statements for deferring later on.
 type Deferrer struct {
 	funcs []func()
@@ -18,6 +20,14 @@ func (d *Deferrer) Cleanup() {
 // Defer adds a function to the Deferrer's stack.
 func (d *Deferrer) Defer(f func()) {
 	d.funcs = append(d.funcs, f)
+}
+
+func (d *Deferrer) DeferErrorable(f func() error) {
+	d.Defer(func() {
+		if err := f(); err != nil {
+			log.Printf("Cleanup error: %s", err)
+		}
+	})
 }
 
 // New creates a new Deferrer for defering actions on *your* timetable.
