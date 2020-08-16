@@ -34,4 +34,9 @@ cd ../..
 ln -s $VERSION/src src
 ln -s $VERSION/bin bin
 ln -s $VERSION/pkg pkg
+ln -s $VERSION/misc misc
 
+# Install or update the latest Go plugins
+vim -c "UpdateAddons"
+vim -c "GoInstallBinaries"
+vim -c "GoUpdateBinaries"
