@@ -9,7 +9,8 @@ fi
 
 VERSION="release-branch.go1.15"
 
-export CGO_ENABLED=0
+# I can't remember why I had this disabled but it bugs me now
+#export CGO_ENABLED=0
 
 ROOT=$HOME/go
 mkdir -p $ROOT
@@ -18,17 +19,27 @@ cd $ROOT
 # Versions later than go 1.4 need go 1.4 to build successfully.
 if [[ ! -d go1.4 ]]; then
     git clone --branch release-branch.go1.4 --depth=1 https://github.com/golang/go.git go1.4
-    cd go1.4/src
-    ./make.bash
-    cd ../..
+else
+    pushd go1.4
+    git restore .
+    git pull
+    popd
 fi
+
+pushd go1.4/src
+./make.bash
+popd
 
 # Make sure we build the new version from scratch
-if [[ -d "$VERSION" ]]; then
-    rm -rf $ROOT/$VERSION
+if ! [[ -d "$VERSION" ]]; then
+    git clone --branch $VERSION --depth=1 https://github.com/golang/go.git $VERSION
+else
+    pushd $VERSION
+    git restore .
+    git pull
+    popd
 fi
 
-git clone --branch $VERSION --depth=1 https://github.com/golang/go.git $VERSION
 
 cd $VERSION/src
 GOROOT_BOOTSTRAP=$ROOT/go1.4 ./make.bash
@@ -36,7 +47,7 @@ cd ../..
 
 
 # Link the latest versions into the parent directory for easy access
-[[ -d src ]] && rm src bin pkg
+[[ -d src ]] && rm src bin pkg misc
 ln -s $VERSION/src src
 ln -s $VERSION/bin bin
 ln -s $VERSION/pkg pkg
