@@ -70,10 +70,12 @@ func RunInDir(directory string, command ...string) (stdoutText string, stderrTex
 	if err != nil {
 		return "", "", fmt.Errorf("Failed to create stdout pipe: %w", err)
 	}
+	defer stdout.Close()
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		return "", "", fmt.Errorf("Failed to create stderr pipe: %w", err)
 	}
+	defer stderr.Close()
 
 	// Start Command
 	if err = cmd.Start(); err != nil {
