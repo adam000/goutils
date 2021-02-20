@@ -14,10 +14,10 @@ import (
 
 func main() {
 	port := ":8080"
-	if len(os.Args) != 0 {
-		i, err := strconv.Atoi(os.Args[0])
+	if len(os.Args) > 1 {
+		i, err := strconv.Atoi(os.Args[1])
 		if err != nil {
-			log.Fatalf("Could not convert %s to string:%v", os.Args[0], err)
+			log.Fatalf("Could not convert %s to string:%v", os.Args[1], err)
 		}
 		if i <= 1024 || i > 65535 {
 			log.Fatalf("Port %d outside of valid range (1024, 65535]", i)
