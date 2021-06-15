@@ -10,7 +10,7 @@ Restart=on-failure
 RestartSec=1
 User=urnamehere
 WorkingDirectory=/path/here
-ExecStart=/usr/bin/ping
+ExecStart=/usr/bin/healthcheck-ping
 
 [Install]
 WantedBy=multi-user.target
