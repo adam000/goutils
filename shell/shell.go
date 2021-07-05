@@ -2,6 +2,7 @@ package shell
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -77,7 +78,7 @@ func RunInDirWithStdin(directory string, input string, command ...string) (stdou
 		if err != nil {
 			return "", "", fmt.Errorf("Failed to create stdin pipe: %w", err)
 		}
-		fmt.Fprint(stdin, input)
+		io.WriteString(stdin, input)
 		stdin.Close()
 	}
 	stdout, err := cmd.StdoutPipe()
