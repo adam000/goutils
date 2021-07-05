@@ -62,10 +62,24 @@ func ParseDirectory(matches DirMatch, dir string) (isRoot bool, subdirs []string
 
 // RunInDir runs `command` from `directory`, and returns any text from the `command` or `err` that occurred.
 func RunInDir(directory string, command ...string) (stdoutText string, stderrText string, err error) {
+	stdoutText, stderrText, err = RunInDirWithStdin(directory, "", command...)
+	return
+}
+
+// RunInDirWithStdin runs `command` from `directory`, passing the string `input` to stdin, and returns any text from the `command` or `err` that occurred.
+func RunInDirWithStdin(directory string, input string, command ...string) (stdoutText string, stderrText string, err error) {
 	cmd := exec.Command(command[0], command[1:]...)
 	cmd.Dir = directory
 
 	// Create Pipes
+	if input != "" {
+		stdin, err := cmd.StdinPipe()
+		if err != nil {
+			return "", "", fmt.Errorf("Failed to create stdin pipe: %w", err)
+		}
+		defer stdin.Close()
+		fmt.Fprint(stdin, input)
+	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		return "", "", fmt.Errorf("Failed to create stdout pipe: %w", err)
