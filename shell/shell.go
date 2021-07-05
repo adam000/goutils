@@ -77,8 +77,8 @@ func RunInDirWithStdin(directory string, input string, command ...string) (stdou
 		if err != nil {
 			return "", "", fmt.Errorf("Failed to create stdin pipe: %w", err)
 		}
-		defer stdin.Close()
 		fmt.Fprint(stdin, input)
+		stdin.Close()
 	}
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
