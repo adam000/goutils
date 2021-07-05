@@ -2,12 +2,12 @@
 
 set +e
 
-if ! which -s gcc; then
+if ! which gcc 2> /dev/null 1>&2; then
     echo "gcc needs to be installed, but I couldn't find it. Bailing..."
     exit 0
 fi
 
-VERSION="release-branch.go1.15"
+VERSION="release-branch.go1.16"
 
 # I can't remember why I had this disabled but it bugs me now
 #export CGO_ENABLED=0
