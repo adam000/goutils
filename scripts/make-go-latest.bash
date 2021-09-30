@@ -7,7 +7,7 @@ if ! which gcc 2> /dev/null 1>&2; then
     exit 0
 fi
 
-VERSION="release-branch.go1.16"
+VERSION="release-branch.go1.17"
 
 # I can't remember why I had this disabled but it bugs me now
 #export CGO_ENABLED=0
@@ -59,6 +59,6 @@ if [[ ":$PATH:" != *":$HOME/go/bin:"* ]]; then
 fi
 
 # Install or update the latest Go plugins
-vim -c "UpdateAddons"
-vim -c "GoInstallBinaries"
-vim -c "GoUpdateBinaries"
+vim +UpdateAddons +q
+vim +GoInstallBinaries +q
+vim +GoUpdateBinaries +q
