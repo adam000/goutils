@@ -1,11 +1,17 @@
 package datasize
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Unit int
 
 const gap Unit = 100
 
 const (
-	Byte Unit = iota
+	Invalid Unit = iota
+	Byte
 	Kilobyte
 	Megabyte
 	Gigabyte
@@ -13,7 +19,7 @@ const (
 	Petabyte
 	Exabyte
 
-	Kibibyte = iota + gap + 1
+	Kibibyte = iota + gap - Exabyte + 1
 	Mebibyte
 	Gibibyte
 	Tebibyte
@@ -97,6 +103,39 @@ func (u Unit) ShortString() string {
 	default:
 		return "??"
 	}
+}
+
+func UnitFromString(input string, assumeSi bool) (Unit, error) {
+	// TODO this is kind of lazy and assumes you've checked the input
+	// already with a regex like `([bBkKmMgGtTpPeE](iB|ib|B|b)?)`.
+	if len(input) == 0 {
+		return Invalid, fmt.Errorf("Can't pass empty string to UnitFromString")
+	}
+	lowerInput := strings.ToLower(input)
+
+	u := Invalid
+	switch lowerInput[0] {
+	case 'b':
+		u = Byte
+	case 'k':
+		u = Kilobyte
+	case 'm':
+		u = Megabyte
+	case 'g':
+		u = Gigabyte
+	case 't':
+		u = Terabyte
+	case 'p':
+		u = Petabyte
+	case 'e':
+		u = Exabyte
+	}
+
+	if (assumeSi && len(input) == 1) || (len(input) > 1 && lowerInput[1:] == "ib") {
+		u += gap
+	}
+
+	return u, nil
 }
 
 func (u Unit) Previous() (Unit, bool) {
