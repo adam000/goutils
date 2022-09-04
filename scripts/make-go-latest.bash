@@ -7,7 +7,7 @@ if ! which gcc 2> /dev/null 1>&2; then
     exit 0
 fi
 
-VERSION="release-branch.go1.17"
+VERSION="release-branch.go1.19"
 
 # I can't remember why I had this disabled but it bugs me now
 #export CGO_ENABLED=0
