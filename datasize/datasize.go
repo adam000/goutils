@@ -102,6 +102,27 @@ func (d DataSize) Add(o DataSize) DataSize {
 	return ds.ToHumanReadable()
 }
 
+func (d DataSize) Sub(o DataSize) DataSize {
+	db := d.ToBytes()
+	ob := o.ToBytes()
+
+	ds := DataSize{
+		magnitude: db.magnitude.Sub(db.magnitude, ob.magnitude),
+		unit:      Byte,
+	}
+	if d.unit.IsSi() {
+		return ds.ToHumanReadableSi()
+	}
+	return ds.ToHumanReadable()
+}
+
+func (d DataSize) Gte(o DataSize) bool {
+	db := d.ToBytes()
+	ob := o.ToBytes()
+
+	return db.magnitude.Cmp(ob.magnitude) <= 0
+}
+
 func (d DataSize) String() string {
 	return fmt.Sprintf("%.2f%s", d.magnitude, d.unit.ShortString())
 }
