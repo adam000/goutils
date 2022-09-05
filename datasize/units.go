@@ -1,5 +1,7 @@
 package datasize
 
+// Note: `Byte` is a bare unit and is not considered SI or STD.
+
 import (
 	"fmt"
 	"strings"
@@ -27,8 +29,24 @@ const (
 	Exbibyte
 )
 
+// IsSi reports if the Unit is an SI unit (Système international).
 func (u Unit) IsSi() bool {
 	return u > gap
+}
+
+// ToSi converts
+func (u Unit) ToSi() Unit {
+	if u.IsSi() || u == Byte {
+		return u
+	}
+	return u + gap
+}
+
+func (u Unit) ToStd() Unit {
+	if !u.IsSi() || u == Byte {
+		return u
+	}
+	return u - gap
 }
 
 func (u Unit) Base() int {
@@ -106,10 +124,10 @@ func (u Unit) ShortString() string {
 }
 
 func UnitFromString(input string, assumeSi bool) (Unit, error) {
-	// TODO this is kind of lazy and assumes you've checked the input
+	// This is kind of lazy and assumes you've checked the input
 	// already with a regex like `([bBkKmMgGtTpPeE](iB|ib|B|b)?)`.
 	if len(input) == 0 {
-		return Invalid, fmt.Errorf("Can't pass empty string to UnitFromString")
+		return Invalid, fmt.Errorf("can't pass empty string to UnitFromString")
 	}
 	lowerInput := strings.ToLower(input)
 
@@ -129,6 +147,10 @@ func UnitFromString(input string, assumeSi bool) (Unit, error) {
 		u = Petabyte
 	case 'e':
 		u = Exabyte
+	}
+
+	if u == Invalid {
+		return Invalid, fmt.Errorf("invalid first character %c", input[0])
 	}
 
 	if (assumeSi && len(input) == 1) || (len(input) > 1 && lowerInput[1:] == "ib") {
