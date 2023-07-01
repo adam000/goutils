@@ -1,28 +1,45 @@
 package diff
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
-func Test_Diff(t *testing.T) {
-	a := []int{1, 2, 3, 4, 5}
-	b := []int{2, 4, 5}
-
-	allOfA := Diff[int](a, []int{})
-	if len(allOfA) != len(a) {
-		t.Errorf("Expected empty b to return full list, got %v", allOfA)
+func Test_DisjunctiveUnion(t *testing.T) {
+	tests := []struct {
+		a      []int
+		b      []int
+		notInA []int
+		notInB []int
+	}{
+		{
+			[]int{1, 2, 3, 8, 9, 10},
+			[]int{3, 4, 5},
+			[]int{4, 5},
+			[]int{1, 2, 8, 9, 10},
+		},
+		{
+			[]int{1, 2, 3},
+			[]int{1, 2, 3},
+			[]int{},
+			[]int{},
+		},
+		{
+			[]int{1, 2, 3},
+			[]int{1, 2, 3, 4},
+			[]int{4},
+			[]int{},
+		},
 	}
 
-	empty := Diff([]int{}, []int{})
-	if len(empty) != 0 {
-		t.Errorf("Expected empty from empty / empty")
-	}
+	for _, test := range tests {
+		notInA, notInB := DisjunctiveUnion(test.a, test.b)
 
-	result := Diff(a, b)
-	if len(result) != len(a)-len(b) {
-		t.Errorf("Expected diff of %v and %v to be %d long, but got %v", a, b, len(a)-len(b), result)
-	}
-
-	same := Diff(a, a)
-	if len(same) != 0 {
-		t.Errorf("Expected diffing the same thing against itself to come up empty, got %v", same)
+		if !reflect.DeepEqual(notInA, test.notInA) {
+			t.Errorf("Expected notInA to be %v, got %v", test.notInA, notInA)
+		}
+		if !reflect.DeepEqual(notInB, test.notInB) {
+			t.Errorf("Expected notInB to be %v, got %v", test.notInB, notInB)
+		}
 	}
 }

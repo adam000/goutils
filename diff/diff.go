@@ -1,19 +1,38 @@
 package diff
 
-// Assumes that a is a superset of b and that they are sorted.
-// TODO need a better name.
-func Diff[C comparable](a []C, b []C) []C {
-	result := make([]C, 0, len(a)-len(b))
+import "golang.org/x/exp/constraints"
+
+// DisjunctiveUnion returns 2 slices containing the values not shared by both.
+// DisjunctiveUnion assumes that there are not duplicate values in the input
+// slices and that the input slices are sorted.
+func DisjunctiveUnion[C constraints.Ordered](a []C, b []C) ([]C, []C) {
+	notInA := make([]C, 0)
+	notInB := make([]C, 0)
+	aIdx := 0
 	bIdx := 0
-	for _, i := range a {
-		if bIdx < len(b) {
-			if i == b[bIdx] {
-				bIdx++
-				continue
-			}
+
+	for aIdx < len(a) && bIdx < len(b) {
+		if a[aIdx] < b[bIdx] {
+			notInB = append(notInB, a[aIdx])
+			aIdx++
+		} else if a[aIdx] == b[bIdx] {
+			aIdx++
+			bIdx++
+		} else {
+			notInA = append(notInA, b[bIdx])
+			bIdx++
 		}
-		result = append(result, i)
 	}
 
-	return result
+	for aIdx < len(a) {
+		notInB = append(notInB, a[aIdx])
+		aIdx++
+	}
+
+	for bIdx < len(b) {
+		notInA = append(notInA, b[bIdx])
+		bIdx++
+	}
+
+	return notInA, notInB
 }

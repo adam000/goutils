@@ -7,6 +7,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/crypto v0.10.0
+	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df
 )
 
 require (
