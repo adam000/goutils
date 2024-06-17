@@ -9,13 +9,10 @@ type Page struct {
 }
 
 func NewPage() Page {
-	siteTitle := config.siteTitle
-	if config.siteTitle == "" {
-		siteTitle = "adam zero dot net"
-	}
 	ret := Page{
-		SiteTitle: siteTitle,
-		Vars:      make(map[string]interface{}),
+		Javascript:  config.defaultJavascript,
+		Stylesheets: config.defaultStylesheets,
+		Vars:        make(map[string]interface{}),
 	}
 
 	return ret
@@ -29,19 +26,19 @@ func (p *Page) SetTitle(title string) {
 	p.Title = title
 }
 
-func (p *Page) GetJSFiles() []string {
+func (p *Page) GetJsFiles() []string {
 	return p.Javascript
 }
 
-func (p *Page) AddJSFiles(file ...string) {
+func (p *Page) AddJsFiles(file ...string) {
 	p.Javascript = append(p.Javascript, file...)
 }
 
-func (p *Page) GetCSSFiles() []string {
+func (p *Page) GetCssFiles() []string {
 	return p.Stylesheets
 }
 
-func (p *Page) AddCSSFiles(file ...string) {
+func (p *Page) AddCssFiles(file ...string) {
 	p.Stylesheets = append(p.Stylesheets, file...)
 }
 
