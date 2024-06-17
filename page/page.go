@@ -26,6 +26,14 @@ func (p *Page) SetTitle(title string) {
 	p.Title = title
 }
 
+func (p *Page) GetSiteTitle() string {
+	return p.SiteTitle
+}
+
+func (p *Page) SetSiteTitle(siteTitle string) {
+	p.SiteTitle = siteTitle
+}
+
 func (p *Page) GetJsFiles() []string {
 	return p.Javascript
 }
