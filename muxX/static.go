@@ -16,7 +16,6 @@ func HandleStaticDir(mux *http.ServeMux, routePrefix string, serverPrefix string
 			return
 		}
 
-		//http.FileServer(http.Dir(".")).ServeHTTP(w, r)
 		http.FileServer(http.Dir(serverPrefix)).ServeHTTP(w, r)
 	}))
 }
