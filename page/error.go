@@ -38,9 +38,9 @@ func (p *Page) SetNotFound(w http.ResponseWriter, r *http.Request, log *slog.Log
 }
 
 // 500
-func (p *Page) SetInternalServerError(w http.ResponseWriter, r *http.Request, log *slog.Logger) {
+func (p *Page) SetInternalServerError(w http.ResponseWriter, r *http.Request, log *slog.Logger, err error) {
 	statusCode := http.StatusInternalServerError
-	log.Info("Served 500 Internal Server Error", "status", statusCode, "path", r.URL.Path)
+	log.Info("Served 500 Internal Server Error", "status", statusCode, "path", r.URL.Path, "error", err)
 	p.setErrorVars(w, r, statusCode, log)
 }
 
