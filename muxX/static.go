@@ -10,12 +10,12 @@ import (
 // toil.
 func HandleStaticDir(mux *http.ServeMux, routePrefix string, serverPrefix string, handleNotFound func(w http.ResponseWriter, r *http.Request), serveDir bool) {
 	route := "GET " + routePrefix + "/*"
-	mux.Handle(route, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.Handle(route, http.StripPrefix(routePrefix, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if !serveDir && strings.HasSuffix(r.URL.Path, "/") {
 			handleNotFound(w, r)
 			return
 		}
 
 		http.FileServer(http.Dir(serverPrefix)).ServeHTTP(w, r)
-	}))
+	})))
 }
