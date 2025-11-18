@@ -1,22 +1,22 @@
 package page
 
 var config = struct {
-	defaultStylesheets []string
-	defaultJavascript  []string
+	defaultStylesheets []Import
+	defaultJavascript  []Import
 }{}
 
-func SetDefaultStylesheets(stylesheets []string) {
+func SetDefaultStylesheets(stylesheets []Import) {
 	config.defaultStylesheets = stylesheets
 }
 
-func GetDefaultStylesheets() []string {
+func GetDefaultStylesheets() []Import {
 	return config.defaultStylesheets
 }
 
-func SetDefaultJavascript(javascript []string) {
+func SetDefaultJavascript(javascript []Import) {
 	config.defaultJavascript = javascript
 }
 
-func GetDefaultJavascript() []string {
+func GetDefaultJavascript() []Import {
 	return config.defaultJavascript
 }

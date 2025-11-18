@@ -2,10 +2,15 @@ package page
 
 type Page struct {
 	Title       string
-	Javascript  []string
-	Stylesheets []string
+	Javascript  []Import
+	Stylesheets []Import
 	Vars        map[string]interface{}
 	SiteTitle   string
+}
+
+type Import struct {
+	Url    string
+	SriSha string
 }
 
 func NewPage() Page {
@@ -34,20 +39,38 @@ func (p *Page) SetSiteTitle(siteTitle string) {
 	p.SiteTitle = siteTitle
 }
 
-func (p *Page) GetJsFiles() []string {
+func (p *Page) GetJsFiles() []Import {
 	return p.Javascript
 }
 
 func (p *Page) AddJsFiles(file ...string) {
-	p.Javascript = append(p.Javascript, file...)
+	for _, f := range file {
+		imp := Import{
+			Url: f,
+		}
+		p.AddJsFile(imp)
+	}
 }
 
-func (p *Page) GetCssFiles() []string {
+func (p *Page) AddJsFile(i Import) {
+	p.Javascript = append(p.Javascript, i)
+}
+
+func (p *Page) GetCssFiles() []Import {
 	return p.Stylesheets
 }
 
 func (p *Page) AddCssFiles(file ...string) {
-	p.Stylesheets = append(p.Stylesheets, file...)
+	for _, f := range file {
+		imp := Import{
+			Url: f,
+		}
+		p.AddCssFile(imp)
+	}
+}
+
+func (p *Page) AddCssFile(i Import) {
+	p.Stylesheets = append(p.Stylesheets, i)
 }
 
 func (p *Page) AddVar(name string, variable interface{}) {

@@ -1,7 +1,6 @@
 module github.com/adam000/goutils
 
-go 1.22.4
-toolchain go1.24.1
+go 1.25.3
 
 require (
 	github.com/go-sql-driver/mysql v1.7.1
