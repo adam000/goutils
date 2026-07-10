@@ -6,11 +6,11 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gorilla/mux v1.8.0
 	go4.org v0.0.0-20230225012048-214862532bf5
-	golang.org/x/crypto v0.45.0
+	golang.org/x/crypto v0.52.0
 	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df
 )
 
 require (
-	golang.org/x/sys v0.38.0 // indirect
-	golang.org/x/term v0.37.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/term v0.43.0 // indirect
 )
